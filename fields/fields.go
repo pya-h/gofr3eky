@@ -1,6 +1,4 @@
-package gofr3eky
-
-import "errors"
+package fields
 
 type FieldType uint8
 
@@ -18,16 +16,7 @@ type Field struct {
 	Value interface{}
 }
 
-var fields map[string]*Field
-
-func Get(name string) (*Field, error) {
-	if field, exists := fields[name]; exists {
-		return field, nil
-	}
-	return nil, errors.New("no such Field asshole")
-}
-
-func New(x Numerix) (*Field, error) {
+func New(x interface{}) (*Field, error) {
 	if _, ok := x.(int); ok {
 		return &Field{Type: FieldType(numeric), Value: x}, nil
 	}
@@ -46,6 +35,6 @@ func Text(name string, value string) *Field {
 	return &Field{Type: FieldType(text), Value: value}
 }
 
-func Numeric (name string, value string) *Field {
-        return &Field{Type: FieldType(Text), Value: value}
+func Numeric(name string, value string) *Field {
+	return &Field{Type: FieldType(text), Value: value}
 }
