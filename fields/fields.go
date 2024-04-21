@@ -7,9 +7,9 @@ type FieldType uint8
 type Numerix interface{}
 
 const (
-	Numeric FieldType = iota
-	Letters
-	WhatTheFux
+	numeric FieldType = iota
+	text
+	whatTheFux
 	// ...
 )
 
@@ -27,17 +27,25 @@ func Get(name string) (*Field, error) {
 	return nil, errors.New("no such Field asshole")
 }
 
-func NewField(x Numerix) (*Field, error) {
+func New(x Numerix) (*Field, error) {
 	if _, ok := x.(int); ok {
-		return &Field{Type: FieldType(Numeric), Value: x}, nil
+		return &Field{Type: FieldType(numeric), Value: x}, nil
 	}
 	if _, ok := x.(float64); ok {
-		return &Field{Type: FieldType(Numeric), Value: x}, nil
+		return &Field{Type: FieldType(numeric), Value: x}, nil
 	}
 	if _, ok := x.(string); ok {
-		return &Field{Type: FieldType(Letters), Value: x}, nil
+		return &Field{Type: FieldType(text), Value: x}, nil
 	}
 
-	return &Field{Type: FieldType(WhatTheFux), Value: x}, nil
+	return &Field{Type: FieldType(whatTheFux), Value: x}, nil
 
+}
+
+func Text(name string, value string) *Field {
+	return &Field{Type: FieldType(text), Value: value}
+}
+
+func Numeric (name string, value string) *Field {
+        return &Field{Type: FieldType(Text), Value: value}
 }
