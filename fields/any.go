@@ -18,3 +18,8 @@ func TypeName(any Any) string {
 func TypeOf(any Any, type_name string) bool {
 	return reflect.TypeOf(&any).Elem().Name() == type_name
 }
+
+func IsCollection(variable Any) bool {
+	type_of := reflect.TypeOf(variable).Kind()
+	return type_of == reflect.Array || type_of == reflect.Slice
+}
