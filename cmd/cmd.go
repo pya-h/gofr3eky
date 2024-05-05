@@ -21,12 +21,13 @@ func HandleStatement(current_memento *memento.Memento, statement string) {
 			log.Println("failed defining new field:", terms[0], ";", err)
 		} else {
 			v, _ := current_memento.Get(terms[0])
-			fmt.Println(v)
+			fmt.Println(v, current_memento)
 		}
 	}
 }
 
 func main() {
+
 	global, err := memento.New()
 	if err != nil {
 		log.Fatalln(err)
