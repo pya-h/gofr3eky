@@ -91,7 +91,8 @@ func NextMethod(identifier string, statements ...fields.Any) (*Block, error) {
 	return &block, block.ExtractStatements(statements)
 }
 
-func (block *Block) HandleStatement(liny *Liny) {
+func (block *Block) Process(liny *Liny) {
+	liny.Parse(block.Memento)
 	terms := strings.Fields(liny.Statement)
 	count := len(terms)
 	switch terms[0] {

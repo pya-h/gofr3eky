@@ -19,6 +19,6 @@ func main() {
 			log.Println(err)
 		}
 		statement := results[0]
-		main.HandleStatement(main.NextLiny(statement))
+		main.Process(main.NextLiny(statement))
 	}
 }
