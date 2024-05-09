@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"gofr3eky/fields"
 	"gofr3eky/memento"
+	"log"
+	"strings"
 )
 
 type Variant uint8
@@ -38,14 +40,21 @@ func Main() (*Block, error) {
 		Identifier: "main",
 	}, nil
 }
-func (block *Block) extractStatements(statements []fields.Any) error {
+
+func (block *Block) NextLiny(statement string) *Liny {
+	liny := NewLiny(statement)
+	block.Content = append(block.Content, liny)
+	return liny
+}
+
+func (block *Block) ExtractStatements(statements []fields.Any) error {
 	// this function extracts the list of initial Linies provided for a block;
 	// arguments passed in any argument-pass format supported.
 	if !fields.IsCollection(statements) {
 		// as: func(arg1, arg2, arg3, ...)
 		for _, statement := range statements {
 			if v, ok := statement.(string); ok { // as: func("line1", "line2", "line3", ...)
-				block.Content = append(block.Content, NextLiny(v))
+				block.NextLiny(v)
 			} else if liny, ok := statement.(Liny); ok { // as: func(LinyObject1, LinyObject2, LinyObject3, ...)
 				block.Content = append(block.Content, &liny)
 			} else if liny_ptr, ok := statement.(*Liny); ok { // as: func(*LinyObjectPtr1, *LinyObjectPtr2, *LinyObjectPtr3, ...)
@@ -61,7 +70,7 @@ func (block *Block) extractStatements(statements []fields.Any) error {
 		}
 		if string_list, ok := statements[0].([]string); ok { // as: func(["line1", "line2", ...])
 			for i := range string_list[0] {
-				block.Content = append(block.Content, NextLiny(string_list[i]))
+				block.NextLiny(string_list[i])
 			}
 		} else if linies, ok := statements[0].([]*Liny); ok { // as: func([*linyPtr1, *linyPtr2, ...])
 			block.Content = linies
@@ -79,5 +88,33 @@ func (block *Block) extractStatements(statements []fields.Any) error {
 func NextMethod(identifier string, statements ...fields.Any) (*Block, error) {
 	// TODO: Test these sections and packages until now.
 	block := Block{Variant: Variant(method), Identifier: identifier}
-	return &block, block.extractStatements(statements)
+	return &block, block.ExtractStatements(statements)
+}
+
+func (block *Block) HandleStatement(liny *Liny) {
+	terms := strings.Fields(liny.Statement)
+	count := len(terms)
+	switch terms[0] {
+	case "#":
+		for i := 1; i < count; i++ {
+			// TODO: Check the next term is operator, evaluate until next one isnt operator.
+			if field, err := block.Memento.Get(terms[i]); err == nil {
+				fmt.Print(field.Value, " ")
+			} else {
+				fmt.Print("wtf ")
+			}
+		}
+		fmt.Print("\n")
+	default:
+		// Define new field
+		liny.Statement = liny.Statement[len(terms[0])+1 : len(liny.Statement)-1]
+
+		// For test:
+		if err := block.Memento.DefineField(terms[0], liny.Statement); err != nil {
+			log.Println("failed defining new field:", terms[0], ";", err)
+		} else {
+			v, _ := block.Memento.Get(terms[0])
+			fmt.Println(v, block.Memento)
+		}
+	}
 }

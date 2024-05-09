@@ -15,7 +15,7 @@ func (line Liny) Do() (*fields.Field, error) {
 	return line.Draft, nil
 }
 
-func NextLiny(statement string) *Liny {
+func NewLiny(statement string) *Liny {
 	return &Liny{
 		Statement: statement,
 		Draft:     nil,
