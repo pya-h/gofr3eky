@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"gofr3eky/fields"
+	"gofr3eky/memento"
 )
 
 type Variant uint8
@@ -19,12 +20,24 @@ const (
 )
 
 type Block struct {
-	Content []*Liny
-
+	Content    []*Liny
+	Memento    *memento.Memento
 	Variant    Variant
 	Identifier string
 }
 
+func Main() (*Block, error) {
+	mem, err := memento.New()
+	if err != nil {
+		return nil, err
+	}
+	return &Block{
+		Memento:    mem,
+		Content:    make([]*Liny, 0),
+		Variant:    Variant(main),
+		Identifier: "main",
+	}, nil
+}
 func (block *Block) extractStatements(statements []fields.Any) error {
 	// this function extracts the list of initial Linies provided for a block;
 	// arguments passed in any argument-pass format supported.

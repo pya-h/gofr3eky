@@ -12,10 +12,11 @@ type Memento struct {
 func New(args ...fields.Any) (*Memento, error) {
 	var memento Memento
 	var err error = nil
+	memento.Fields = make(map[string]*fields.Field)
 	if len(args) > 0 {
 		err = memento.DefineSomeFields(args)
 	}
-	memento.Fields = make(map[string]*fields.Field)
+
 	return &memento, err
 }
 

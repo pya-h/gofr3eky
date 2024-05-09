@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"gofr3eky/asker"
+	"gofr3eky/blocks"
 	"gofr3eky/memento"
 	"log"
 	"strings"
@@ -10,8 +11,12 @@ import (
 
 func HandleStatement(current_memento *memento.Memento, statement string) {
 	terms := strings.Fields(statement)
-
+	count := len(terms)
 	switch terms[0] {
+	case "#":
+		for i := 1; i < count; i++ {
+
+		}
 	default:
 		// Define new field
 		statement = statement[len(terms[0])+1 : len(statement)-1]
@@ -27,10 +32,9 @@ func HandleStatement(current_memento *memento.Memento, statement string) {
 }
 
 func main() {
-
-	global, err := memento.New()
+	main, err := blocks.Main()
 	if err != nil {
-		log.Fatalln(err)
+		panic(err)
 	}
 
 	for {
@@ -40,6 +44,6 @@ func main() {
 			log.Println(err)
 		}
 		statement := results[0]
-		HandleStatement(global, statement)
+		HandleStatement(main.Memento, statement)
 	}
 }
