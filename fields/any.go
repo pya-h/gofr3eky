@@ -23,3 +23,7 @@ func IsCollection(variable Any) bool {
 	type_of := reflect.TypeOf(variable).Kind()
 	return type_of == reflect.Array || type_of == reflect.Slice
 }
+
+type AnalyzedTerm struct {
+	Type Variant
+}

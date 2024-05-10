@@ -3,6 +3,7 @@ package memento
 import (
 	"errors"
 	"gofr3eky/fields"
+	"strconv"
 )
 
 type Memento struct {
@@ -61,4 +62,16 @@ func (memento *Memento) Get(name string) (*fields.Field, error) {
 		return field, nil
 	}
 	return nil, errors.New("no such Field asshole")
+}
+
+func (memento *Memento) Text(name string, value string) error {
+	memento.Fields[name] = &fields.Field{Type: fields.Variant(fields.VariantText), Text: value}
+	return nil
+}
+
+func (memento *Memento) Decimal(name string, value string) error {
+	if v, err := strconv.ParseFloat(value, 64); err == nil {
+		memento.Fields[name] = &fields.Field{Type: fields.Variant(fields.VariantText), Decimal: v}
+	}
+	return errors.New("not a decimal")
 }
