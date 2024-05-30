@@ -13,7 +13,6 @@ type Liny struct {
 	Draft     *fields.Field // last run result of the line
 	Tag       string
 	Cursor    int16
-	NextState []fields.Any
 }
 
 func NewLiny(statement string) *Liny {
@@ -41,11 +40,26 @@ func (liny *Liny) Parse(source *memento.Memento) {
 // TODO: Best way to check string is numeric
 func (liny *Liny) Do() {
 	count := len(liny.Terms)
+
 	for i := 1; i < count-1; i++ {
-		if liny.Terms[i].Type == fields.VariantText {
+		var result *fields.Field = nil
+		var err error
+		if liny.Terms[i+1].Type == fields.VariantText {
 			switch liny.Terms[i].Text {
 			case "+":
-				result, err := calculus.AddUp(liny.Terms[i-1], liny.Terms[i+1])
+				// Todo: handle i+2 doesnt exist
+				result, err = calculus.AddUp(liny.Terms[i], liny.Terms[i+2])
+
+			}
+		}
+
+		if result != nil && err == nil {
+			liny.Terms[i] = result
+			if i+3 < count {
+				liny.Terms = append(liny.Terms[:i+1], liny.Terms[i+3:]...)
+				count -= 2
+			} else {
+				liny.Terms = liny.Terms[:i+1]
 			}
 		}
 	}
