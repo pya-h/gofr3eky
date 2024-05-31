@@ -25,7 +25,7 @@ func NewLiny(statement string) *Liny {
 }
 
 func (liny *Liny) Parse(source *memento.Memento) {
-	// for now assume its only math lin6
+	// for now assume its only math line
 	terms := strings.Fields(liny.Statement)
 	liny.Terms = make([]*fields.Field, 0)
 	for _, v := range terms[1:] {
@@ -49,6 +49,12 @@ func (liny *Liny) Do() {
 			case "+":
 				// Todo: handle i+2 doesnt exist
 				result, err = calculus.AddUp(liny.Terms[i], liny.Terms[i+2])
+			case "-":
+				result, err = calculus.Substract(liny.Terms[i], liny.Terms[i+2])
+			case "*":
+				result, err = calculus.Multiply(liny.Terms[i], liny.Terms[i+2])
+			case "%":
+				result, err = calculus.DevideIn(liny.Terms[i], liny.Terms[i+2])
 
 			}
 		}
@@ -61,6 +67,7 @@ func (liny *Liny) Do() {
 			} else {
 				liny.Terms = liny.Terms[:i+1]
 			}
+			i--
 		}
 	}
 }
