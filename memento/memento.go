@@ -61,7 +61,7 @@ func (memento *Memento) Get(name string) (*fields.Field, error) {
 	if field, exists := memento.Fields[name]; exists {
 		return field, nil
 	}
-	return nil, errors.New("no such Field asshole")
+	return nil, errors.New("no such field asshole")
 }
 
 func (memento *Memento) Text(name string, value string) error {

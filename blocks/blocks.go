@@ -98,9 +98,9 @@ func (block *Block) Process(liny *Liny) {
 	switch terms[0] {
 	case "#":
 		for i := 1; i < count; i++ {
-			// TODO: Check the next term is operator, evaluate until next one isnt operator.
+			// TODO: Check the next term is operator, evaluate until next one isn't operator.
 			if field, err := block.Memento.Get(terms[i]); err == nil {
-				fmt.Print(field.Value, " ")
+				fmt.Print(field.Value(), " ")
 			} else {
 				fmt.Print("wtf ")
 			}
@@ -109,9 +109,9 @@ func (block *Block) Process(liny *Liny) {
 	default:
 		// Define new field
 		liny.Statement = liny.Statement[len(terms[0])+1 : len(liny.Statement)-1]
-
+		liny.Do()
 		// For test:
-		if err := block.Memento.DefineField(terms[0], liny.Statement); err != nil {
+		if err := block.Memento.DefineField(terms[0], liny.Terms[0]); err != nil {
 			log.Println("failed defining new field:", terms[0], ";", err)
 		} else {
 			v, _ := block.Memento.Get(terms[0])

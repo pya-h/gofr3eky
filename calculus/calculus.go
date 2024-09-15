@@ -15,7 +15,7 @@ func AddUp(a *fields.Field, b *fields.Field) (*fields.Field, error) {
 	return nil, errors.New("first operand is not numeric")
 }
 
-func Substract(a *fields.Field, b *fields.Field) (*fields.Field, error) {
+func Subtract(a *fields.Field, b *fields.Field) (*fields.Field, error) {
 	if a.Type == fields.VariantDecimal {
 		if b.Type == fields.VariantDecimal {
 			return fields.NewDecimal(a.Decimal - b.Decimal), nil
@@ -35,7 +35,7 @@ func Multiply(a *fields.Field, b *fields.Field) (*fields.Field, error) {
 	return nil, errors.New("first operand is not numeric")
 }
 
-func DevideIn(a *fields.Field, b *fields.Field) (*fields.Field, error) {
+func DivideIn(a *fields.Field, b *fields.Field) (*fields.Field, error) {
 	if a.Type == fields.VariantDecimal {
 		if b.Type == fields.VariantDecimal {
 			return fields.NewDecimal(a.Decimal / b.Decimal), nil
