@@ -6,6 +6,7 @@ import (
 	"gofr3eky/fields"
 	"gofr3eky/memento"
 	"log"
+	"runtime"
 	"strings"
 )
 
@@ -91,6 +92,17 @@ func NextMethod(identifier string, statements ...fields.Any) (*Block, error) {
 	return &block, block.ExtractStatements(statements)
 }
 
+func showMemoryStats() {
+	var memStats runtime.MemStats
+	runtime.ReadMemStats(&memStats)
+
+	// Print total memory allocated (in bytes)
+	fmt.Printf("Memory Alloc = %v kb\n", memStats.Alloc/1024.0)
+	fmt.Printf("Total Alloc = %v kb\n", memStats.TotalAlloc/1024.0)
+	fmt.Printf("Heap Alloc = %v kb\n", memStats.HeapAlloc/1024.0)
+	fmt.Printf("Sys = %v kb\n", memStats.Sys)
+}
+
 func (block *Block) Process(liny *Liny) {
 	liny.Parse(block.Memento)
 	terms := strings.Fields(liny.Statement)
@@ -106,6 +118,8 @@ func (block *Block) Process(liny *Liny) {
 			}
 		}
 		fmt.Print("\n")
+	case "#M":
+		showMemoryStats()
 	default:
 		// Define new field
 		liny.Statement = liny.Statement[len(terms[0])+1 : len(liny.Statement)-1]
@@ -118,4 +132,5 @@ func (block *Block) Process(liny *Liny) {
 			fmt.Println(v, block.Memento)
 		}
 	}
+	// FIXME: After running each command, used memory increase as +[4-9]
 }

@@ -20,5 +20,6 @@ func main() {
 		}
 		statement := results[0]
 		main.Process(main.NextLiny(statement))
+
 	}
 }
