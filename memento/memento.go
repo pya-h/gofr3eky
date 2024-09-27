@@ -30,7 +30,7 @@ func (memento *Memento) DefineSomeFields(fields_data []fields.Any) error {
 	failure_count := 0
 	for i < count {
 		if name, ok := fields_data[i].(string); ok {
-			if err := memento.DefineField(name, fields_data[i+1]); err != nil {
+			if _, err := memento.DefineField(name, fields_data[i+1]); err != nil {
 				failure_count++
 			}
 		}
@@ -39,22 +39,24 @@ func (memento *Memento) DefineSomeFields(fields_data []fields.Any) error {
 	return nil
 }
 
-func (memento *Memento) DefineField(name string, value fields.Any) error {
-
+func (memento *Memento) DefineField(name string, value fields.Any) (*fields.Field, error) {
 	if field, ok := value.(*fields.Field); ok {
 		(*memento).Fields[name] = field
-	} else if field, ok := value.(fields.Field); ok {
+		return field, nil
+	}
+	if field, ok := value.(fields.Field); ok {
 		(*memento).Fields[name] = &field
-	} else if raw_data, ok := value.(string); ok {
+		return &field, nil
+	}
+	if raw_data, ok := value.(string); ok {
 		field, err := fields.New(raw_data)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		(*memento).Fields[name] = field
-	} else {
-		return errors.New("unsupported init argument list for memento initializing")
+		return field, nil
 	}
-	return nil
+	return nil, errors.New("unsupported init argument list for memento initializing")
 }
 
 func (memento *Memento) Get(name string) (*fields.Field, error) {

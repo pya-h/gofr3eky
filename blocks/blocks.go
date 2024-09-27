@@ -7,7 +7,6 @@ import (
 	"gofr3eky/memento"
 	"log"
 	"runtime"
-	"strings"
 )
 
 type Variant uint8
@@ -105,32 +104,45 @@ func showMemoryStats() {
 
 func (block *Block) Process(liny *Liny) {
 	liny.Parse(block.Memento)
-	terms := strings.Fields(liny.Statement)
-	count := len(terms)
-	switch terms[0] {
+	count := len(liny.Terms)
+
+	switch liny.Terms[0].Value() {
 	case "#":
+		liny.Do(1, uint(count))
+		count = len(liny.Terms)
 		for i := 1; i < count; i++ {
-			// TODO: Check the next term is operator, evaluate until next one isn't operator.
-			if field, err := block.Memento.Get(terms[i]); err == nil {
-				fmt.Print(field.Value(), " ")
-			} else {
-				fmt.Print("wtf ")
-			}
+			fmt.Print(liny.Terms[i].Value(), " ")
 		}
 		fmt.Print("\n")
 	case "#M":
 		showMemoryStats()
 	default:
 		// Define new field
-		liny.Statement = liny.Statement[len(terms[0])+1 : len(liny.Statement)-1]
-		liny.Do()
-		// For test:
-		if err := block.Memento.DefineField(terms[0], liny.Terms[0]); err != nil {
-			log.Println("failed defining new field:", terms[0], ";", err)
+		liny.Do(1, uint(count))
+
+		if liny.Terms[0].Type == fields.VariantText {
+			count = len(liny.Terms)
+			if count > 2 {
+				// TODO: It's probably a string or array
+				if liny.Terms[0].Type == fields.VariantText && liny.Terms[1].Text == ":" {
+					str := fmt.Sprint(liny.Terms[2].Value())
+					for i := 3; i < count; i++ {
+						str += fmt.Sprint(" ", liny.Terms[i].Value())
+					}
+					if _, err := block.Memento.DefineField(liny.Terms[0].Text, str); err != nil {
+						log.Println("failed defining new field:", liny.Terms[0].Text, ";", err)
+					}
+				}
+			} else if count == 2 {
+				if _, err := block.Memento.DefineField(liny.Terms[0].Text, liny.Terms[1]); err != nil {
+					log.Println("failed defining new field:", liny.Terms[0].Text, ";", err)
+				}
+			}
 		} else {
-			v, _ := block.Memento.Get(terms[0])
-			fmt.Println(v, block.Memento)
+			// Its a simple math statement
+			// TODO: Calculate it and save in drafts
 		}
+
 	}
 	// FIXME: After running each command, used memory increase as +[4-9]
 }
