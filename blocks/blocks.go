@@ -141,6 +141,7 @@ func (block *Block) Process(liny *Liny) {
 		} else {
 			// Its a simple math statement
 			// TODO: Calculate it and save in drafts
+			liny.Terms[0].Assign(liny.Terms[1])
 		}
 
 	}

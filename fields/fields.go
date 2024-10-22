@@ -18,6 +18,7 @@ type Field struct {
 	Decimal float64
 	Text    string
 	Wtf     Any
+	Name    string
 }
 
 func New(x interface{}) (*Field, error) {
@@ -58,4 +59,18 @@ func NewDecimal(value float64) *Field {
 
 func NewText(value string) *Field {
 	return &Field{Type: VariantDecimal, Text: value}
+}
+
+func (lhs *Field) Assign(rhs *Field) {
+	lhs.Type = rhs.Type
+	switch lhs.Type {
+	case VariantDecimal:
+		lhs.Decimal = rhs.Decimal
+	case VariantText:
+		lhs.Text = rhs.Text
+	case VariantWhatTheFux:
+		lhs.Wtf = rhs.Wtf
+	}
+
+	// ** Important: This way when a field changes type, it holds its previous type value.
 }

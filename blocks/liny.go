@@ -4,6 +4,7 @@ import (
 	"gofr3eky/calculus"
 	"gofr3eky/fields"
 	"gofr3eky/memento"
+	"strconv"
 	"strings"
 )
 
@@ -49,7 +50,18 @@ func (liny *Liny) Do(start uint, end uint) {
 				result, err = calculus.Multiply(liny.Terms[i], liny.Terms[i+2])
 			case "%":
 				result, err = calculus.DivideIn(liny.Terms[i], liny.Terms[i+2])
-
+			case "^":
+				result, err = calculus.RaiseTo(liny.Terms[i], liny.Terms[i+2])
+			case "!/":
+				result, err = calculus.MultiplyIn2ndRootOf(liny.Terms[i], liny.Terms[i+2])
+			default:
+				middle_param := liny.Terms[i+1].Text
+				param_length := len(middle_param)
+				if middle_param[0] == '!' && middle_param[param_length-1] == '/' {
+					if n, conversion_err := strconv.ParseFloat(middle_param[1:param_length-1], 64); conversion_err == nil {
+						result, err = calculus.MultiplyInNthRootOf(liny.Terms[i], liny.Terms[i+2], n)
+					}
+				}
 			}
 		}
 

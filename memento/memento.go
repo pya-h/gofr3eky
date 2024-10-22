@@ -41,10 +41,12 @@ func (memento *Memento) DefineSomeFields(fields_data []fields.Any) error {
 
 func (memento *Memento) DefineField(name string, value fields.Any) (*fields.Field, error) {
 	if field, ok := value.(*fields.Field); ok {
+		field.Name = name
 		(*memento).Fields[name] = field
 		return field, nil
 	}
 	if field, ok := value.(fields.Field); ok {
+		field.Name = name
 		(*memento).Fields[name] = &field
 		return &field, nil
 	}
@@ -53,6 +55,7 @@ func (memento *Memento) DefineField(name string, value fields.Any) (*fields.Fiel
 		if err != nil {
 			return nil, err
 		}
+		field.Name = name
 		(*memento).Fields[name] = field
 		return field, nil
 	}
